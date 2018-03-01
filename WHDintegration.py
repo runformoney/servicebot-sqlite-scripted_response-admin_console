@@ -6,8 +6,8 @@ db = DBHelper()
 class APIintegration:
 
     def create_ticket_in_whd(self,ticket_id,owner_id,date_today):
-        db.db_connect()
-        data = db.get_case_subject(ticket_id, owner_id, date_today)
+        ##db.db_connect()
+        data = db.get_case_subject(ticket_id, owner_id, date_today)[0]
         print(data)
         js = {
             "type": "problem",
@@ -47,7 +47,7 @@ class APIintegration:
             ]
         }
         #js = json.load(js)
-        print(data)
+        #print(data)
         if len(data) > 0:
             js["subject"] = data[3]
             js["description"] = data[4]
@@ -74,20 +74,20 @@ class APIintegration:
             headers = {'content-type': 'application/json'}
 
             response = requests.post(url, data=payload, auth=(user, pwd), headers=headers)
-            response = response.text
+            #response = response.text
 
-            print(response)
+            print(response.text)
 
-            if type(response) is not dict:
-                json_acceptable_string = response.replace("'", "\"")
-                d = json.loads(json_acceptable_string)
-                id = d['ticket']['id']
-                db.db_connect()
-                db.update_whd_ticket_id(id,owner_id,date_today,ticket_id)
+            #if type(response) is not dict:
+            ##json_acceptable_string = response.replace("'", "\"")
+            d = response.json()
+            id = d['ticket']['id']
+            #db.db_connect()
+            db.update_whd_ticket_id(id,owner_id,date_today,ticket_id)
 
     def escalate_ticket(self, ticket_id,owner_id,date_today):
-        db.db_connect()
-        data = db.get_case_subject(ticket_id, owner_id, date_today)
+        ##db.db_connect()
+        data = db.get_case_subject(ticket_id, owner_id, date_today)[0]
         whd_ticket_id = data[-1]
         priority = int(data[-2])
         priorityDict = {1: "low", 2: "high", 3: "urgent"}
