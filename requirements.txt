@@ -7,3 +7,4 @@ sklearn
 nltk
 urllib3
 pandas
+matplotlib
