@@ -183,8 +183,8 @@ def start():
     #db.db_connect()()
     db.setup()
     last_update_id = None
-    while True:
-    #while time.time() < t_end:
+    #while True:
+    while time.time() < t_end:
         updates = get_updates(last_update_id)
         if len(updates["result"]) > 0:
             last_update_id = get_last_update_id(updates) + 1
