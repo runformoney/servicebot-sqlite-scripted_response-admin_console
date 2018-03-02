@@ -403,7 +403,7 @@ def admin_check(owner,text):
         action = 'Admin Extraction'
 
 def sendImage(file_name,chat):
-    url = "https://api.telegram.org/bot".format(TOKEN)+ "/sendPhoto"
+    url = "https://api.telegram.org/bot"+ TOKEN + "/sendPhoto"
     print(url)
     files = {'photo': open(file_name, 'rb')}
     data = {'chat_id' : chat}
