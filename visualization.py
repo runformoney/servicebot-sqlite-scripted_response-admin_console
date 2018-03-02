@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 #import numpy as np
 import sqlite3
+import os
 
 class Visualization():
     def __init__(self):
@@ -21,7 +22,9 @@ class Visualization():
         plt.xlabel("Department")
         plt.ylabel("Count")
         plt.title("Count of Incidents vs Department")
-        plt.savefig("charts\chart_by_department.png")
+        file_name = "charts//chart_by_department.png"
+        os.remove(file_name)
+        plt.savefig(file_name)
         plt.close()
         return "success"
     ####    2 - Bar chart of count of incidents w.r.t priority
@@ -32,7 +35,9 @@ class Visualization():
         plt.xlabel("Priority")
         plt.ylabel("Count")
         plt.title("Count of Incidents vs Priority")
-        plt.savefig("charts\chart_by_Priority.png")
+        file_name = "charts//chart_by_Priority.png"
+        os.remove(file_name)
+        plt.savefig(file_name)
         plt.close()
         return "success"
     ####    3 - Bar chart of count of incidents w.r.t department for a particular date
@@ -45,7 +50,9 @@ class Visualization():
         plt.xlabel("Department")
         plt.ylabel("Count")
         plt.title("Count of Incidents vs Department for {}".format(date))
-        plt.savefig("charts\chart_by_department_for_date.png")
+        file_name = "charts//chart_by_department_for_date.png"
+        os.remove(file_name)
+        plt.savefig(file_name)
         plt.close()
         return "success"
     ####    4 - Bar chart of count of incidents w.r.t priority for a particular date
@@ -58,7 +65,10 @@ class Visualization():
         plt.xlabel("Priority")
         plt.ylabel("Count")
         plt.title("Count of Incidents vs Priority for {}".format(date))
-        plt.savefig("charts\chart_by_Priority_for_date.png")
+        file_name = "charts//chart_by_Priority_for_date.png"
+
+        os.remove(file_name)
+        plt.savefig(file_name)
         plt.close()
         return "success"
 ####    5 - Bar chart of count of incidents w.r.t location
