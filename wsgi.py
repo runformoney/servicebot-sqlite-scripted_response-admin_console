@@ -403,10 +403,11 @@ def admin_check(owner,text):
         action = 'Admin Extraction'
 
 def sendImage(file_name,chat):
-    url = "https://api.telegram.org/bot" +TOKEN+"/sendPhoto";
+    url = "https://api.telegram.org/bot" +TOKEN+ "/sendPhoto"
+    print(url)
     files = {'photo': open(file_name, 'rb')}
     data = {'chat_id' : chat}
-    r= requests.post(url, files=files, data=data)
+    r = requests.post(url, files=files, data=data)
     print(r.status_code, r.reason, r.content)
 
 def admin_stuff(chat,text):
@@ -415,21 +416,21 @@ def admin_stuff(chat,text):
     file_name = ''
     if text == "Incidents By Department":
         file_generated = vis.incidents_by_department()
-        file_name = "charts\chart_by_department.png"
+        file_name = "charts/chart_by_department.png"
 
     elif  text == "Incidents By Priority":
         file_generated = vis.incidents_by_Priority()
-        file_name = "charts\chart_by_Priority.png"
+        file_name = "charts/chart_by_Priority.png"
 
     elif text == "Incidents By Department - Logged Today":
         date_today = datetime.datetime.today().strftime('%Y-%m-%d')
         file_generated = vis.incidents_by_department_date(str(date_today))
-        file_name = "charts\chart_by_department_for_date.png"
+        file_name = "charts/chart_by_department_for_date.png"
 
     elif text == "Incidents By Priority - Logged Today":
         date_today = datetime.datetime.today().strftime('%Y-%m-%d')
         file_generated = vis.incidents_by_Priority_date(str(date_today))
-        file_name = "charts\chart_by_Priority_for_date.png"
+        file_name = "charts/chart_by_Priority_for_date.png"
     else:
         send_message("Sorry, invalid choice. Type /admin to try again.",chat)
 
