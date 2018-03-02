@@ -8,3 +8,4 @@ nltk
 urllib3
 pandas
 matplotlib
+xlrd
