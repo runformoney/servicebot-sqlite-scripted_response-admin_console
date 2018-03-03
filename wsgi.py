@@ -453,13 +453,6 @@ def admin_stuff(chat,text):
 def call_main_app():
     print("In Call")
     start()
-    js = get_updates()
-    update_ids = []
-    if len(js)>0:
-        for updates in js["result"]:
-            update_ids.append(js["result"]["update_id"])
-        for chat in update_ids:
-            send_message(" ",chat)
     return("App is running!")
 
 if __name__ == '__main__':
