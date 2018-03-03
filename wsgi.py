@@ -73,85 +73,88 @@ ticket_no = 0
 
 def handle_updates(updates):
     global action
+    dt = datetime.datetime.now()
+
     for update in updates["result"]:
-        text = update["message"]["text"]
-        chat = update["message"]["chat"]["id"]
-        firstName = update["message"]["from"]["first_name"]
-        print(update)
-        if "last_name" in update["message"]["from"]:
-            lastName = update["message"]["from"]["last_name"]
-        else:
-            lastName = ''
+        if 'text' in update["message"]:# and time.mktime(dt.timetuple()) >= update["message"]["date"]:
+            text = update["message"]["text"]
+            chat = update["message"]["chat"]["id"]
+            firstName = update["message"]["from"]["first_name"]
+            print(update)
+            if "last_name" in update["message"]["from"]:
+                lastName = update["message"]["from"]["last_name"]
+            else:
+                lastName = ''
 
-        #db.db_connect()()
-        items = db.get_items(chat)
-        items_lower = [x.lower() for x in items]
-
-        print("action " + str(action))
-
-        if action != None and text[0] != '/':
-        #if action != None and action in commands and text[0] != '/':
-            if action == 'Log Service Request':
-                log_service_request(chat,text,firstName,lastName,ticket_no)
-            elif action == 'Close Request':
-                close_reuqest(chat,text)
-            elif action == 'Escalate Request':
-                #print(text)
-                escalate_request(chat,text)
-            elif action == 'Ask a Question':
-                ask_a_question(chat,text)
-            elif action == 'Admin':
-                admin_check(chat,text)
-            elif action == 'Admin Extraction':
-                admin_stuff(chat,text)
-
-        elif text in commands:
-            command(text,chat,firstName)
-
-        elif text == "/stop" or text.lower() in goodbye_messages:
             #db.db_connect()()
-            db.delete_chat(chat)
-            msg = 'Thank you, ' +firstName+ " for your time. Good day ahead :)"
-            send_message(msg,chat)
+            items = db.get_items(chat)
+            items_lower = [x.lower() for x in items]
 
-        elif text == '/admin':
-            admin_value = db.get_admin(chat)
-            if len(admin_value) == 0:
-                send_message("Sorry, I cannot understand.",chat)
-                sendHelptext(chat)
-            else:
-                send_message("Please reply the pass-key.",chat)
-                action = 'Admin'
-                #admin_stuff(chat,text)
+            print("action " + str(action))
 
-        elif text == "/start" or text.lower() == "hi" or text.lower() == "hello":
-            msg = "Hi " + firstName + "."
-            if 'hi' in items_lower or 'hello' in items_lower:
-                send_message(msg + " Tell me how can I help you today :)", chat)
-                sendHelptext(chat)
+            if action != None and text[0] != '/':
+            #if action != None and action in commands and text[0] != '/':
+                if action == 'Log Service Request':
+                    log_service_request(chat,text,firstName,lastName,ticket_no)
+                elif action == 'Close Request':
+                    close_reuqest(chat,text)
+                elif action == 'Escalate Request':
+                    #print(text)
+                    escalate_request(chat,text)
+                elif action == 'Ask a Question':
+                    ask_a_question(chat,text)
+                elif action == 'Admin':
+                    admin_check(chat,text)
+                elif action == 'Admin Extraction':
+                    admin_stuff(chat,text)
+
+            elif text in commands:
+                command(text,chat,firstName)
+
+            elif text == "/stop" or text.lower() in goodbye_messages:
+                #db.db_connect()()
+                db.delete_chat(chat)
+                msg = 'Thank you, ' +firstName+ " for your time. Good day ahead :)"
+                send_message(msg,chat)
+
+            elif text == '/admin':
+                admin_value = db.get_admin(chat)
+                if len(admin_value) == 0:
+                    send_message("Sorry, I cannot understand.",chat)
+                    sendHelptext(chat)
+                else:
+                    send_message("Please reply the pass-key.",chat)
+                    action = 'Admin'
+                    #admin_stuff(chat,text)
+
+            elif text == "/start" or text.lower() == "hi" or text.lower() == "hello":
+                msg = "Hi " + firstName + "."
+                if 'hi' in items_lower or 'hello' in items_lower:
+                    send_message(msg + " Tell me how can I help you today :)", chat)
+                    sendHelptext(chat)
+                else:
+                    send_message(msg + " This is OpenHack-ServiceBot. How can I assist you today?", chat)
+                    sendHelptext(chat)
+                    #db.db_connect()()
+                    db.add_item(text, chat)
+
+            elif text.lower() == 'help' or text == "/menu":
+                keyboard = build_keyboard(commands)
+                send_message("Select an option to continue", chat, keyboard)
+                action = None
             else:
-                send_message(msg + " This is OpenHack-ServiceBot. How can I assist you today?", chat)
-                sendHelptext(chat)
+                topScoringIntent = gk.get_intent(text)
+                if topScoringIntent != None and topScoringIntent in all_scripted_reply_category:
+                    scripted_resp = cat_resp.loc[topScoringIntent]["Reply"]
+                    print(scripted_resp)
+                    send_message(scripted_resp, chat)
+                    sendHelptext(chat)
+                else:
+                    send_message("Sorry, I cannot understand.",chat)
+                    sendHelptext(chat)
+            if text != '/stop' or text.lower() in goodbye_messages:
                 #db.db_connect()()
                 db.add_item(text, chat)
-
-        elif text.lower() == 'help' or text == "/menu":
-            keyboard = build_keyboard(commands)
-            send_message("Select an option to continue", chat, keyboard)
-            action = None
-        else:
-            topScoringIntent = gk.get_intent(text)
-            if topScoringIntent != None and topScoringIntent in all_scripted_reply_category:
-                scripted_resp = cat_resp.loc[topScoringIntent]["Reply"]
-                print(scripted_resp)
-                send_message(scripted_resp, chat)
-                sendHelptext(chat)
-            else:
-                send_message("Sorry, I cannot understand.",chat)
-                sendHelptext(chat)
-        if text != '/stop' or text.lower() in goodbye_messages:
-            #db.db_connect()()
-            db.add_item(text, chat)
 
 def get_last_chat_id_and_text(updates):
     num_updates = len(updates["result"])
@@ -450,6 +453,13 @@ def admin_stuff(chat,text):
 def call_main_app():
     print("In Call")
     start()
+    js = get_updates()
+    update_ids = []
+    if len(js)>0:
+        for updates in js["result"]:
+            update_ids.append(js["result"]["update_id"])
+        for chat in update_ids:
+            send_message(" ",chat)
     return("App is running!")
 
 if __name__ == '__main__':
