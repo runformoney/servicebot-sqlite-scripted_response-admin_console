@@ -39,6 +39,7 @@ class DBHelper:
         #conn.close()
 
     def get_admin(self,owner):
+        conn = db_connect()
         stmt = "SELECT * FROM admin_cred WHERE owner = (?)"
         args = (owner,)
         values = [x for x in conn.execute(stmt, args)]
@@ -47,6 +48,7 @@ class DBHelper:
 
 
     def delete_item(self, item_text, owner):
+        conn = db_connect()
         owner = str(owner)
         item_text = str(item_text)
         stmt = "DELETE FROM items WHERE description = (?) AND owner = (?)"
@@ -56,6 +58,7 @@ class DBHelper:
         #conn.close()
 
     def get_items(self, owner):
+        
         conn = db_connect()
         stmt = "SELECT description FROM items WHERE owner = (?)"
         args = (owner,)
@@ -63,6 +66,7 @@ class DBHelper:
         #conn.close()
 
     def delete_chat(self, owner):
+        conn = db_connect()
         owner = str(owner)
         # stmt = "UPDATE items SET description = '' WHERE owner = (?)"
         stmt = "DELETE FROM items WHERE owner = (?)"
@@ -72,6 +76,7 @@ class DBHelper:
         #conn.close()
 
     def delete_case(self, ticket_no, owner):
+        conn = db_connect()
         owner = str(owner)
         ticket_no = str(ticket_no)
         # stmt = "UPDATE items SET description = '' WHERE owner = (?)"
@@ -85,6 +90,7 @@ class DBHelper:
         #chat = str(chat)
         #ticket_no = str(ticket_no)
         #date_today = str(date_today)
+        conn = db_connect()
         stmt = "INSERT into cases (ticket_no,log_date, owner, subject, owner_fname, owner_lname) values (?,?,?,?,?,?)"
         args = (ticket_no, date_today, chat, text, firstName, lastName)
         conn.execute(stmt, args)
@@ -95,6 +101,7 @@ class DBHelper:
         #chat = str(chat)
         #ticket_no = str(ticket_no)
         #date_today = str(date_today)
+        conn = db_connect()
         stmt = "select * from cases where log_date = (?) and owner = (?) and ticket_no = (?)"
         args = (date_today, chat, ticket_no)
         conn.execute(stmt, args)
@@ -107,6 +114,7 @@ class DBHelper:
 
     def get_case_department(self, ticket_no, chat):
         chat = str(chat)
+        conn = db_connect()
         ticket_no = str(ticket_no)
         stmt = "select department from cases where owner = (?) and ticket_no = (?)"
         args = (chat, ticket_no)
@@ -119,6 +127,7 @@ class DBHelper:
 
     def get_case_whd_ticket_id(self, ticket_no, chat):
         chat = str(chat)
+        conn = db_connect()
         ticket_no = str(ticket_no)
         stmt = "select whd_ticket_id from cases where owner = (?) and ticket_no = (?)"
         args = (chat, ticket_no)
@@ -133,6 +142,7 @@ class DBHelper:
 
     def delete_invalid_cases(self, chat):
         chat = str(chat)
+        conn = db_connect()
         stmt = "delete from cases where (subject is NULL or (owner_phn is null and owner_loc is null)) and owner = (?)"
         args = (chat,)
         conn.execute(stmt, args)
@@ -144,6 +154,7 @@ class DBHelper:
         #ticket_no = str(ticket_no)
         #date_today = str(date_today)
         stmt = "update cases set detail = (?),department = (?) where owner = (?) and log_date = (?) and ticket_no = (?)"
+        conn = db_connect()
         args = (text, department, chat, date_today, ticket_no)
         conn.execute(stmt, args)
         conn.commit()
@@ -154,6 +165,7 @@ class DBHelper:
         #ticket_no = str(ticket_no)
         #date_today = str(date_today)
         #phn = str(phn)
+        conn = db_connect()
         stmt = "update cases set owner_phn = (?), owner_loc = (?), assignee = (?) where owner = (?) and log_date = (?) and ticket_no = (?)"
         args = (phn, loc, assignee, chat, date_today, ticket_no)
         conn.execute(stmt, args)
@@ -162,6 +174,7 @@ class DBHelper:
 
     def update_whd_ticket_id(self, whd_ticket_id, owner, date_today, ticket_no):
         owner = str(owner)
+        conn = db_connect()
         ticket_no = str(ticket_no)
         date_today = str(date_today)
         whd_ticket_id = str(whd_ticket_id)
@@ -172,6 +185,7 @@ class DBHelper:
         #conn.close()
 
     def get_pending_case(self, chat):
+        conn = db_connect()
         chat = str(chat)
         stmt = "select * from cases where owner = (?)"
         args = (chat,)
@@ -190,6 +204,7 @@ class DBHelper:
     def update_priority(self, chat, priority, ticket_no):
         #chat = str(chat)
         #priority = str(priority)
+        conn = db_connect()
         stmt = "update cases set priority = (?) where owner = (?) and ticket_no = (?)"
         args = (priority, chat, ticket_no)
         conn.execute(stmt, args)
